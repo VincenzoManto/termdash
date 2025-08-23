@@ -7,7 +7,6 @@ import (
 	"github.com/mum4k/termdash/cell"
 	"github.com/mum4k/termdash/private/canvas/braille"
 	"github.com/mum4k/termdash/private/canvas/testcanvas"
-	"github.com/mum4k/termdash/private/draw/testdraw"
 	"github.com/mum4k/termdash/private/faketerm"
 	"github.com/mum4k/termdash/widgetapi"
 )
