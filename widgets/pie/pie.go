@@ -15,6 +15,7 @@ import (
 	"github.com/mum4k/termdash/widgetapi"
 )
 
+// Pie is the widget that displays a pie chart.
 type Pie struct {
 	mu     sync.Mutex
 	values []int
@@ -34,10 +35,10 @@ func New(opts ...Option) (*Pie, error) {
 	}, nil
 }
 
-// The values must be non-negative and a color must be provided for each value.
-// If not enough colors are provided, they will be reused.
 // Values must be provided before calling Draw.
 func (p *Pie) Values(values []int, opts ...Option) error {
+	// The values must be non-negative and a color must be provided for each value.
+	// If not enough colors are provided, they will be reused.
 	p.mu.Lock()
 	defer p.mu.Unlock()
 

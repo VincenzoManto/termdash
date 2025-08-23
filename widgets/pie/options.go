@@ -4,6 +4,7 @@ import (
 	"github.com/mum4k/termdash/cell"
 )
 
+// Option defines a function that sets a specific option for the Pie widget.
 type Option interface {
 	// set sets the provided option.
 	set(*options)
