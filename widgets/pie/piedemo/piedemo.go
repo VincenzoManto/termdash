@@ -1,77 +1,65 @@
 package main
 
 import (
-	"context"
-	"time"
-
-	"github.com/mum4k/termdash"
-	"github.com/mum4k/termdash/cell"
-	"github.com/mum4k/termdash/container"
-	"github.com/mum4k/termdash/linestyle"
-	"github.com/mum4k/termdash/terminal/tcell"
-	"github.com/mum4k/termdash/terminal/terminalapi"
-	"github.com/mum4k/termdash/widgets/pie"
-	
+    "context"
+    "time"
+    "github.com/mum4k/termdash"
+    "github.com/mum4k/termdash/container"
+    "github.com/mum4k/termdash/linestyle"
+    "github.com/mum4k/termdash/terminal/tcell"
+    "github.com/mum4k/termdash/terminal/terminalapi"
+    "github.com/mum4k/termdash/widgets/pie"
 )
 
+func playPie(ctx context.Context, p *pie.Pie, values [][]int, delay time.Duration) {
+    idx := 0
+    ticker := time.NewTicker(delay)
+    defer ticker.Stop()
+    for {
+        select {
+        case <-ticker.C:
+            _ = p.Values(values[idx])
+            idx = (idx + 1) % len(values)
+        case <-ctx.Done():
+            return
+        }
+    }
+}
+
 func main() {
-	t, err := tcell.New()
-	if err != nil {
-		panic(err)
-	}
-	defer t.Close()
+    t, err := tcell.New()
+    if err != nil {
+        panic(err)
+    }
+    defer t.Close()
 
-	ctx, cancel := context.WithCancel(context.Background())
+    ctx, cancel := context.WithCancel(context.Background())
 
-	pieWidget, err := pie.New()
-	if err != nil {
-		panic(err)
-	}
+    pie1, _ := pie.New()
+    _ = pie1.Values([]int{30, 70})
+    go playPie(ctx, pie1, [][]int{{30, 70}, {50, 50}, {80, 20}}, 1*time.Second)
 
-	// Set initial values for the pie chart.
-	values := []int{30, 20, 50}
-	colors := []cell.Color{cell.ColorRed, cell.ColorGreen, cell.ColorBlue}
-	if err := pieWidget.Values(values, pie.WithColors(colors)); err != nil {
-		panic(err)
-	}
+    pie2, _ := pie.New()
+    _ = pie2.Values([]int{10, 20, 30, 40})
+    go playPie(ctx, pie2, [][]int{{10, 20, 30, 40}, {40, 30, 20, 10}, {25, 25, 25, 25}}, 2*time.Second)
 
-	c, err := container.New(
-		t,
-		container.Border(linestyle.Light),
-		container.BorderTitle("PRESS Q TO QUIT"),
-		container.PlaceWidget(pieWidget),
-	)
-	if err != nil {
-		panic(err)
-	}
+    c, _ := container.New(
+        t,
+        container.Border(linestyle.Light),
+        container.BorderTitle("PRESS Q TO QUIT"),
+        container.SplitVertical(
+            container.Left(container.PlaceWidget(pie1)),
+            container.Right(container.PlaceWidget(pie2)),
+        ),
+    )
 
-	// Quitter function to handle 'q' key press.
-	quitter := func(k *terminalapi.Keyboard) {
-		if k.Key == 'q' || k.Key == 'Q' {
-			cancel()
-		}
-	}
+    quitter := func(k *terminalapi.Keyboard) {
+        if k.Key == 'q' || k.Key == 'Q' {
+            cancel()
+        }
+    }
 
-	// Update the pie chart values periodically.
-	go func() {
-		ticker := time.NewTicker(2 * time.Second)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ticker.C:
-				// Update values dynamically.
-				values = []int{values[2], values[0], values[1]}
-				if err := pieWidget.Values(values, pie.WithColors(colors)); err != nil {
-					panic(err)
-				}
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
-
-	if err := termdash.Run(ctx, t, c, termdash.KeyboardSubscriber(quitter), termdash.RedrawInterval(1*time.Second)); err != nil {
-		panic(err)
-	}
+    if err := termdash.Run(ctx, t, c, termdash.KeyboardSubscriber(quitter), termdash.RedrawInterval(1*time.Second)); err != nil {
+        panic(err)
+    }
 }

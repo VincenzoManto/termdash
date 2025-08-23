@@ -5,8 +5,7 @@ import (
 	"testing"
 
 	"github.com/mum4k/termdash/cell"
-	"github.com/mum4k/termdash/private/canvas"
-	"github.com/mum4k/termdash/private/canvas/braille/testbraille"
+	"github.com/mum4k/termdash/private/canvas/braille"
 	"github.com/mum4k/termdash/private/canvas/testcanvas"
 	"github.com/mum4k/termdash/private/draw/testdraw"
 	"github.com/mum4k/termdash/private/faketerm"
@@ -75,7 +74,7 @@ func TestPie(t *testing.T) {
 			}
 
 			if len(tc.values) > 0 {
-				err = p.Values(tc.values, OptionColors(tc.colors))
+				err = p.Values(tc.values)
 				if (err != nil) != tc.wantValuesErr {
 					t.Fatalf("Values() error = %v, wantValuesErr %v", err, tc.wantValuesErr)
 				}
