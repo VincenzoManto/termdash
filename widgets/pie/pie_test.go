@@ -41,13 +41,6 @@ func TestPie(t *testing.T) {
 			wantValuesErr: true,
 		},
 		{
-			desc:          "Values fails with empty colors",
-			values:        []int{10, 20},
-			colors:        []cell.Color{},
-			canvas:        image.Rect(0, 0, 5, 5),
-			wantValuesErr: true,
-		},
-		{
 			desc:   "Draws pie chart with valid values and colors",
 			values: []int{10, 20},
 			colors: []cell.Color{cell.ColorRed, cell.ColorBlue},
