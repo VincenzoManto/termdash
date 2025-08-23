@@ -23,7 +23,7 @@ type Pie struct {
 	opts   *options
 }
 
-// NewPieChart returns a new Pie widget.
+// New returns a new Pie widget.
 func New(opts ...Option) (*Pie, error) {
 	opt := newOptions()
 	for _, o := range opts {
@@ -36,6 +36,7 @@ func New(opts ...Option) (*Pie, error) {
 
 // The values must be non-negative and a color must be provided for each value.
 // If not enough colors are provided, they will be reused.
+// Values must be provided before calling Draw.
 func (p *Pie) Values(values []int, opts ...Option) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -83,6 +84,18 @@ func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int, int) {
 	return mid, radiusX, radiusY
 }
 
+// Draw renders the Pie widget onto the provided canvas. It calculates the
+// pie chart slices based on the values and colors defined in the Pie struct.
+// Each slice is drawn as a series of radial lines from the inner radius to
+// the outer radius. The method ensures thread safety by locking the Pie's
+// mutex during the drawing process.
+//
+// Parameters:
+//   - cvs: The canvas onto which the pie chart will be drawn.
+//   - meta: Metadata about the widget's environment.
+//
+// Returns:
+//   - error: An error if the drawing process fails, or nil if successful.
 func (p *Pie) Draw(cvs *canvas.Canvas, meta *widgetapi.Meta) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()

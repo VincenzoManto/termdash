@@ -35,6 +35,9 @@ func newOptions() *options {
 	}
 }
 
+// DefaultColors defines a default set of colors used for rendering pie chart segments.
+// These colors are chosen from the predefined cell.Color constants and include a variety
+// of primary and secondary colors to ensure visual distinction between segments.
 var DefaultColors = []cell.Color{
 	cell.ColorRed,
 	cell.ColorGreen,
