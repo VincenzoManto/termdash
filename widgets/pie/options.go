@@ -1,9 +1,6 @@
 package pie 
 
 import (
-	"fmt"
-
-	"github.com/mum4k/termdash/align"
 	"github.com/mum4k/termdash/cell"
 )
 
@@ -40,7 +37,7 @@ func newOptions() *options {
 	}
 }
 
-const DefaultColors = []cell.Color{
+var DefaultColors = []cell.Color{
 	cell.ColorRed,
 	cell.ColorGreen,
 	cell.ColorBlue,
