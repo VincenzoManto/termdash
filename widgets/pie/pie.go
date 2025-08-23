@@ -51,6 +51,9 @@ func (p *Pie) Values(values []int, opts ...Option) error {
 
 	p.values = values
 	p.total = 0
+	if (len(p.colors) == 0) {
+		p.colors = DefaultColors
+	}
 	for _, v := range values {
 		if v < 0 {
 			return errors.New("all values must be non-negative")
