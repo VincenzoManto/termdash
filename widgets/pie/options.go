@@ -27,16 +27,8 @@ type options struct{
 
 // validates the provided options
 func (o *options) validate() error {
-	if len(o.values) == 0 {
-		return errors.New("values cannot be empty")
-	}
 	if len(o.colors) == 0 {
 		return errors.New("colors cannot be empty")
-	}
-	for _, v := range o.values {
-		if v < 0 {
-			return errors.New("all values must be non-negative")
-		}
 	}
 	return nil
 }

@@ -19,6 +19,7 @@ type Pie struct{
 	mu sync.Mutex
 	values []int	
 	total int
+	colors []cell.Color
 	opts  *options
 }
 
@@ -43,12 +44,12 @@ func (p *Pie) Values(values []int, opts ...Option) error {
 	if len(values) == 0 {
 		return errors.New("values cannot be empty")
 	}
-	if len(colors) == 0 {
-		return errors.New("colors cannot be empty")
+
+	for _, opt := range opts {
+		opt.set(p.opts)
 	}
 
 	p.values = values
-	p.colors = opts.colors
 	p.total = 0
 	for _, v := range values {
 		if v < 0 {
