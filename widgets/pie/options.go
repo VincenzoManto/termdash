@@ -1,4 +1,4 @@
-package pie 
+package pie
 
 import (
 	"github.com/mum4k/termdash/cell"
@@ -18,7 +18,7 @@ func (o option) set(opts *options) {
 }
 
 // options stores the provided options.
-type options struct{
+type options struct {
 	colors []cell.Color
 }
 

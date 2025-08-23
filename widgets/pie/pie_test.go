@@ -47,10 +47,10 @@ func TestPie(t *testing.T) {
 			canvas: image.Rect(0, 0, 10, 10),
 		},
 		{
-			desc:   "Fails to draw when canvas is too small",
-			values: []int{10, 20},
-			colors: []cell.Color{cell.ColorRed, cell.ColorBlue},
-			canvas: image.Rect(0, 0, 1, 1),
+			desc:        "Fails to draw when canvas is too small",
+			values:      []int{10, 20},
+			colors:      []cell.Color{cell.ColorRed, cell.ColorBlue},
+			canvas:      image.Rect(0, 0, 1, 1),
 			wantDrawErr: true,
 		},
 	}

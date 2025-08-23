@@ -15,12 +15,12 @@ import (
 	"github.com/mum4k/termdash/widgetapi"
 )
 
-type Pie struct{
-	mu sync.Mutex
-	values []int	
-	total int
+type Pie struct {
+	mu     sync.Mutex
+	values []int
+	total  int
 	colors []cell.Color
-	opts  *options
+	opts   *options
 }
 
 // NewPieChart returns a new Pie widget.
@@ -33,7 +33,6 @@ func New(opts ...Option) (*Pie, error) {
 		opts: opt,
 	}, nil
 }
-
 
 // The values must be non-negative and a color must be provided for each value.
 // If not enough colors are provided, they will be reused.
@@ -51,7 +50,7 @@ func (p *Pie) Values(values []int, opts ...Option) error {
 
 	p.values = values
 	p.total = 0
-	if (len(p.colors) == 0) {
+	if len(p.colors) == 0 {
 		p.colors = DefaultColors
 	}
 	for _, v := range values {
@@ -84,7 +83,6 @@ func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int, int) {
 	return mid, radiusX, radiusY
 }
 
-
 func (p *Pie) Draw(cvs *canvas.Canvas, meta *widgetapi.Meta) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -107,16 +105,15 @@ func (p *Pie) Draw(cvs *canvas.Canvas, meta *widgetapi.Meta) error {
 	for i, value := range p.values {
 		endAngle := currentAngle + float64(value)/float64(p.total)*2*math.Pi
 		color := p.colors[i%len(p.colors)]
-		
+
 		// I draw a series of radial lines from the inner radius to the outer radius.
-		for angle := currentAngle; angle < endAngle; angle += 0.01 { 
+		for angle := currentAngle; angle < endAngle; angle += 0.01 {
 			startX := mid.X + int(float64(innerRadiusX)*math.Cos(angle))
 			startY := mid.Y + int(float64(innerRadiusY)*math.Sin(angle))
-			
-			
+
 			endX := mid.X + int(float64(radiusX)*math.Cos(angle))
 			endY := mid.Y + int(float64(radiusY)*math.Sin(angle))
-			
+
 			startPoint := image.Point{X: startX, Y: startY}
 			endPoint := image.Point{X: endX, Y: endY}
 
