@@ -116,6 +116,18 @@ go run widgets/gauge/gaugedemo/gaugedemo.go
 
 [<img src="./doc/images/gaugedemo.gif" alt="gaugedemo" type="image/gif">](widgets/gauge/gaugedemo/gaugedemo.go)
 
+## The Pie
+
+Displays a pie chart. Run the
+[pie demo](widgets/pie/piedemo/piedemo.go).
+
+```go
+go run widgets/pie/piedemo/piedemo.go
+```
+[<img src="./doc/images/piedemo.gif" alt="piedemo" type="image/gif">](widgets/pie/piedemo/piedemo.go)
+
+
+
 ## The Donut
 
 Visualizes progress of an operation as a partial or a complete donut. Run the
