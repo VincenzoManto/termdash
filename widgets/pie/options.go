@@ -1,5 +1,12 @@
 package pie 
 
+import (
+	"fmt"
+
+	"github.com/mum4k/termdash/align"
+	"github.com/mum4k/termdash/cell"
+)
+
 type Option interface {
 	// set sets the provided option.
 	set(*options)
