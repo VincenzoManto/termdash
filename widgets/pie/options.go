@@ -23,10 +23,8 @@ type options struct{
 }
 
 // validates the provided options
+// at the moment no validation is performed cause options are not required
 func (o *options) validate() error {
-	if len(o.colors) == 0 {
-		return errors.New("colors cannot be empty")
-	}
 	return nil
 }
 
