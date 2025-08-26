@@ -4,9 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"math"
 	"sync"
-
 	"github.com/mum4k/termdash/cell"
 	"github.com/mum4k/termdash/private/canvas"
 	"github.com/mum4k/termdash/private/canvas/braille"
@@ -66,23 +64,19 @@ func (p *Pie) Values(values []int, opts ...Option) error {
 }
 
 // it returns the center point and horizontal and vertical radii.
-func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int, int) {
+func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int) {
 	width := ar.Dx() * braille.ColMult
 	height := ar.Dy() * braille.RowMult
 
 	radiusX := width/2 - 2
-	radiusY := height/2 - 2
 	if radiusX < 1 {
 		radiusX = 1
-	}
-	if radiusY < 1 {
-		radiusY = 1
 	}
 	mid := image.Point{
 		X: ar.Min.X*braille.ColMult + width/2,
 		Y: ar.Min.Y*braille.RowMult + height/2,
 	}
-	return mid, radiusX, radiusY
+	return mid, radiusX
 }
 
 // Draw renders the Pie widget onto the provided canvas. It calculates the
@@ -90,6 +84,12 @@ func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int, int) {
 // Each slice is drawn as a series of radial lines from the inner radius to
 // the outer radius. The method ensures thread safety by locking the Pie's
 // mutex during the drawing process.
+// 
+//
+// The number of colors in the list is not significant. If there are more values than
+// colors, the colors will be reused in a round-robin fashion. This ensures that all
+// segments are assigned a color, even if the number of values exceeds the number of
+// available colors in the list.
 //
 // Parameters:
 //   - cvs: The canvas onto which the pie chart will be drawn.
@@ -110,29 +110,26 @@ func (p *Pie) Draw(cvs *canvas.Canvas, meta *widgetapi.Meta) error {
 		return fmt.Errorf("braille.New => %v", err)
 	}
 
-	mid, radiusX, radiusY := pieChartMidAndRadii(cvs.Area())
+	mid, radiusX := pieChartMidAndRadii(cvs.Area())
 
 	innerRadiusX := int(float64(radiusX) * 0.6)
-	innerRadiusY := int(float64(radiusY) * 0.6)
+	// innerRadiusY := int(float64(radiusY) * 0.6)
 
 	currentAngle := 0.0
 	for i, value := range p.values {
-		endAngle := currentAngle + float64(value)/float64(p.total)*2*math.Pi
+		endAngle := currentAngle + float64(value)/float64(p.total)*360 // Convert to degrees
 		color := p.colors[i%len(p.colors)]
 
-		// I draw a series of radial lines from the inner radius to the outer radius.
-		for angle := currentAngle; angle < endAngle; angle += 0.01 {
-			startX := mid.X + int(float64(innerRadiusX)*math.Cos(angle))
-			startY := mid.Y + int(float64(innerRadiusY)*math.Sin(angle))
-
-			endX := mid.X + int(float64(radiusX)*math.Cos(angle))
-			endY := mid.Y + int(float64(radiusY)*math.Sin(angle))
-
-			startPoint := image.Point{X: startX, Y: startY}
-			endPoint := image.Point{X: endX, Y: endY}
-
-			if err := draw.BrailleLine(bc, startPoint, endPoint, draw.BrailleLineCellOpts(cell.FgColor(color))); err != nil {
-				return fmt.Errorf("failed to draw donut slice line: %v", err)
+		for j := innerRadiusX; j <= radiusX; j++ {
+			// Draw the arc for the current slice.
+			if err := draw.BrailleCircle(
+				bc,
+				mid,
+				j,
+				draw.BrailleCircleArcOnly(int(currentAngle), int(endAngle)),
+				draw.BrailleCircleCellOpts(cell.FgColor(color)),
+			); err != nil {
+				return fmt.Errorf("failed to draw pie slice arc: %v", err)
 			}
 		}
 
