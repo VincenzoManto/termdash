@@ -9,6 +9,11 @@ import (
 	"github.com/mum4k/termdash/private/canvas/testcanvas"
 	"github.com/mum4k/termdash/private/faketerm"
 	"github.com/mum4k/termdash/widgetapi"
+	"github.com/mum4k/termdash/private/canvas/braille/testbraille"
+	"github.com/mum4k/termdash/private/draw/testdraw"
+	"github.com/mum4k/termdash/private/draw"
+
+
 )
 
 func TestPie(t *testing.T) {
@@ -16,6 +21,7 @@ func TestPie(t *testing.T) {
 		desc          string
 		values        []int
 		colors        []cell.Color
+		want          func(size image.Point) *faketerm.Terminal
 		canvas        image.Rectangle
 		wantDrawErr   bool
 		wantNewErr    bool
@@ -53,6 +59,41 @@ func TestPie(t *testing.T) {
 			canvas:      image.Rect(0, 0, 1, 1),
 			wantDrawErr: true,
 		},
+		{
+			desc:   "Draws a simple two-slice pie chart and verifies output",
+			values: []int{1, 1},
+			colors: []cell.Color{cell.ColorGreen, cell.ColorRed},
+			canvas: image.Rect(0, 0, 10, 10),
+			want: func(size image.Point) *faketerm.Terminal {
+				ft := faketerm.MustNew(size)
+				bc := testbraille.MustNew(ft.Area())
+
+				mid := image.Point{4, 4}
+				
+				testdraw.MustBrailleCircle(bc, mid, 4,
+					draw.BrailleCircleArcOnly(90, 270),
+					draw.BrailleCircleCellOpts(cell.FgColor(cell.ColorGreen)),
+				)
+				testdraw.MustBrailleCircle(bc, mid, 3,
+					draw.BrailleCircleArcOnly(90, 270),
+					draw.BrailleCircleCellOpts(cell.FgColor(cell.ColorGreen)),
+				)
+
+				// Semicerchio rosso a destra
+				testdraw.MustBrailleCircle(bc, mid, 4,
+					draw.BrailleCircleArcOnly(-90, 90),
+					draw.BrailleCircleCellOpts(cell.FgColor(cell.ColorRed)),
+				)
+				testdraw.MustBrailleCircle(bc, mid, 3,
+					draw.BrailleCircleArcOnly(-90, 90),
+					draw.BrailleCircleCellOpts(cell.FgColor(cell.ColorRed)),
+				)
+				
+				testbraille.MustApply(bc, ft)
+				return ft
+			},
+		},
+
 	}
 
 	for _, tc := range tests {
