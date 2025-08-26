@@ -85,7 +85,6 @@ func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int) {
 // the outer radius. The method ensures thread safety by locking the Pie's
 // mutex during the drawing process.
 //
-//
 // The number of colors in the list is not significant. If there are more values than
 // colors, the colors will be reused in a round-robin fashion. This ensures that all
 // segments are assigned a color, even if the number of values exceeds the number of
