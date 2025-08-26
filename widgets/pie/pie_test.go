@@ -6,14 +6,12 @@ import (
 
 	"github.com/mum4k/termdash/cell"
 	"github.com/mum4k/termdash/private/canvas/braille"
+	"github.com/mum4k/termdash/private/canvas/braille/testbraille"
 	"github.com/mum4k/termdash/private/canvas/testcanvas"
+	"github.com/mum4k/termdash/private/draw"
+	"github.com/mum4k/termdash/private/draw/testdraw"
 	"github.com/mum4k/termdash/private/faketerm"
 	"github.com/mum4k/termdash/widgetapi"
-	"github.com/mum4k/termdash/private/canvas/braille/testbraille"
-	"github.com/mum4k/termdash/private/draw/testdraw"
-	"github.com/mum4k/termdash/private/draw"
-
-
 )
 
 func TestPie(t *testing.T) {
@@ -69,7 +67,7 @@ func TestPie(t *testing.T) {
 				bc := testbraille.MustNew(ft.Area())
 
 				mid := image.Point{4, 4}
-				
+
 				testdraw.MustBrailleCircle(bc, mid, 4,
 					draw.BrailleCircleArcOnly(90, 270),
 					draw.BrailleCircleCellOpts(cell.FgColor(cell.ColorGreen)),
@@ -88,12 +86,11 @@ func TestPie(t *testing.T) {
 					draw.BrailleCircleArcOnly(-90, 90),
 					draw.BrailleCircleCellOpts(cell.FgColor(cell.ColorRed)),
 				)
-				
+
 				testbraille.MustApply(bc, ft)
 				return ft
 			},
 		},
-
 	}
 
 	for _, tc := range tests {

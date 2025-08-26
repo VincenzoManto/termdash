@@ -3,14 +3,14 @@ package pie
 import (
 	"errors"
 	"fmt"
-	"image"
-	"sync"
 	"github.com/mum4k/termdash/cell"
 	"github.com/mum4k/termdash/private/canvas"
 	"github.com/mum4k/termdash/private/canvas/braille"
 	"github.com/mum4k/termdash/private/draw"
 	"github.com/mum4k/termdash/terminal/terminalapi"
 	"github.com/mum4k/termdash/widgetapi"
+	"image"
+	"sync"
 )
 
 // Pie is the widget that displays a pie chart.
@@ -84,7 +84,7 @@ func pieChartMidAndRadii(ar image.Rectangle) (image.Point, int) {
 // Each slice is drawn as a series of radial lines from the inner radius to
 // the outer radius. The method ensures thread safety by locking the Pie's
 // mutex during the drawing process.
-// 
+//
 //
 // The number of colors in the list is not significant. If there are more values than
 // colors, the colors will be reused in a round-robin fashion. This ensures that all

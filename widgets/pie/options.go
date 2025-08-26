@@ -26,8 +26,9 @@ type options struct {
 // validates the provided options
 // at the moment no validation is performed cause options are not required
 func (o *options) validate() error {
-	return nil	
+	return nil
 }
+
 // ColorOption sets custom colors for the pie chart segments.
 func ColorOption(colors []cell.Color) Option {
 	return option(func(opts *options) {
